@@ -1,5 +1,6 @@
 const { google } = require('googleapis');
 const fs = require('fs');
+const  request = require('request');
 
 //require('dotenv').config();
 var credentials = null;
@@ -37,8 +38,6 @@ function createConnection(req) {
         redirect_url = req.protocol+"://"+req.headers.host + redirect;
     }
 
-    console.log(clientSecret)
-    console.log(clientId)
     return new google.auth.OAuth2(
         clientId, clientSecret, redirect_url
     );
@@ -74,13 +73,40 @@ module.exports.analyzeCalander = function(req, cb) {
         events.map((event, i) => {
             //     cb({start: event.start.dateTime || event.start.date, event: event.summary})
             const start = event.start.dateTime || event.start.date;
-            console.log(`${start} - ${event.summary}`);
             analysis.total_events += 1;
             if (event.summary && event.summary.trim().toLowerCase().startsWith("flight")) {
                 analysis.flights += 1;
             }
+
+            var other_attendee = 0;
+            if ('attendees' in event) {
+                event.attendees.map((attendee, i) => {
+                    if (attendee.self != true) {
+                        other_attendee += 1;
+                    }
+                });
+                if (other_attendee > 1) {
+                    analysis.group_meets += 1;
+                } else if (other_attendee == 1) {
+                    analysis.one_on_one += 1;
+                }
+            }
         });
         cb(req, analysis);
+    });
+}
+
+module.exports.revoke = function(req, cb) {
+    request.post({
+      headers: {'content-type' : 'application/x-www-form-urlencoded'},
+      url:     'https://oauth2.googleapis.com/revoke',
+      form:    {token: req.session.tokens.access_token}
+    }, function(error, response, body){
+        if (error) {
+            console.log(error);
+        }
+        delete req.session.tokens;
+        cb(req);
     });
 }
 

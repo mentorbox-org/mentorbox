@@ -32,8 +32,6 @@ app.set('view engine', 'handlebars');
 // add & configure middleware
 app.use(session({
   genid: (req) => {
-    console.log('Inside the session middleware')
-    console.log(req.sessionID)
     return uuid() // use UUIDs for session IDs
   },
   store: new FileStore(),
@@ -49,6 +47,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/static/home.html'));
 })
 
+app.get('/revoke', (req, res) => {
+  if (req.session.tokens) {
+      googlecon.revoke(req, (req, err) => {
+        if (err) {
+          console.log(err)
+        }
+        res.sendFile(path.join(__dirname + '/static/home.html'));
+    });
+  } else {
+    res.sendFile(path.join(__dirname + '/static/home.html'));
+  }
+})
 
 
 app.get('/gauth', (req, res) => {
@@ -64,10 +74,8 @@ app.get('/gauth', (req, res) => {
 const setToken = async (req, res, next) => {
   googlecon.getAccessToken(req.query.code, (err, tokens) => {
       if (err) {
-         console.log("Got error "+err)
           res.redirect('/gauth');
       } else {
-        console.log("Setting tokens")
           req.session.tokens = tokens;
       }
       next();
