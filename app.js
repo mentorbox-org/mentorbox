@@ -14,10 +14,18 @@ const fs = require('fs');
 var PORT = 8000;
 if (process.env.NODE_MODE == "prod") {
   PORT = 80
+  console.log("Setting port 80 from "+__dirname)
 }
+
+var chat_port = process.env.CHAT_PORT ? process.env.CHAT_PORT : 4200;
+
+var home_params = {
+  chat_port : chat_port
+};
+
 // create the server
 const app = express();
-app.use(express.static('static'));
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -40,11 +48,10 @@ app.use(session({
   saveUninitialized: true
 }))
 
-// create the homepage route at '/'
-
+// Homepage route.
 app.get('/', (req, res) => {
-    req.session.cred = "SomeCred";
-  res.sendFile(path.join(__dirname + '/static/home.html'));
+  req.session.cred = "SomeCred";
+  res.render('home', home_params)
 })
 
 app.get('/revoke', (req, res) => {
@@ -53,10 +60,10 @@ app.get('/revoke', (req, res) => {
         if (err) {
           console.log(err)
         }
-        res.sendFile(path.join(__dirname + '/static/home.html'));
+        res.render('home', home_params)
     });
   } else {
-    res.sendFile(path.join(__dirname + '/static/home.html'));
+    res.render('home', home_params)
   }
 })
 
@@ -82,7 +89,6 @@ const setToken = async (req, res, next) => {
   });
 }
 
-
 app.get('/oauth2callback', setToken, (req, res) => {
   googlecon.analyzeCalander(req, (req, items) => {
     res.render('calstats', items)
@@ -91,5 +97,5 @@ app.get('/oauth2callback', setToken, (req, res) => {
 
 // tell the server what port to listen on
 app.listen(PORT, () => {
-  console.log('Listening on localhost: '+ PORT)
+  console.log('Listening on : '+ PORT)
 })

@@ -12,6 +12,7 @@
 <link href="css/font-awesome.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
 <link href="css/pages/dashboard.css" rel="stylesheet">
+<link href="css/embed.css" rel="stylesheet">
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -49,7 +50,7 @@
   </div>
   <!-- /navbar-inner --> 
 </div>
-<!-- /navbar -->
+<!-- /navbar - ->
 <div class="subnavbar">
   <div class="subnavbar-inner">
     <div class="container">
@@ -57,17 +58,17 @@
         <li class="active"><a href="index.html"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
       </ul>
     </div>
-    <!-- /container --> 
+    <!- - /container - -> 
   </div>
-  <!-- /subnavbar-inner --> 
-</div>
+  <!- - /subnavbar-inner - -> 
+</div-->
 <!-- /subnavbar -->
 <div class="main">
   <div class="main-inner">
     <div class="container">
       <div class="row">
-        <!-- /span6 -->
-        <div class="span6">
+        <!-- /span5 -->
+        <div class="span5">
           <div class="widget">
             <div class="widget-header"> <i class="icon-bookmark"></i>
               <h3>Analyze This!</h3>
@@ -84,7 +85,21 @@
           </div>
           <!-- /widget -->
         </div>
-        <!-- /span6 --> 
+        <!-- /span5 --> 
+        <!-- /message --> 
+        <div class="span5">
+            <div id="embedded_messenger">
+              <header id="message_header" onclick="Botkit.toggle()">Chat</header>
+              <iframe  id="botkit_client" src="//www.mentorbox.org:3210/chat.html"></iframe>
+          </div>
+          <script src="//www.mentorbox.org:3210/embed.js"></script>
+          <script>
+          var options = {}; // for options, see: https://github.com/howdyai/botkit-starter-web/blob/master/docs/botkit_web_client.md#botkitbootuser
+          Botkit.boot(options);
+          </script>
+          <link rel="stylesheet" href="//www.mentorbox.org:3210/css/embed.css" />
+        </div>    
+        <!-- /message --> 
       </div>
       <!-- /row --> 
     </div>
@@ -149,7 +164,7 @@
 <script src="js/chart.min.js" type="text/javascript"></script> 
 <script src="js/bootstrap.js"></script>
 <script language="javascript" type="text/javascript" src="js/full-calendar/fullcalendar.min.js"></script>
- 
+<script src="js/client.js"></script> 
 <script src="js/base.js"></script> 
 <script>     
 </script><!-- /Calendar -->
